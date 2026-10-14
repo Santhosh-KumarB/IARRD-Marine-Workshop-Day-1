@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ஆழ்கடலில் ஒரு பயணம் - Interactive Workshop</title>
+   
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@700&family=Montserrat:wght@400;700&family=Inter:wght@400;700&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <img id="company-logo" src="IARRD logo.png" alt="IARRD Logo">
+   
+    <audio id="impact-sound" src="impact.mp3" preload="auto"></audio>
+    <audio id="ambient-audio" src="ambient.mp3" loop preload="auto"></audio>
+    <audio id="clunk-sound" src="clunk.mp3" preload="auto"></audio>
+
+    <button id="audio-toggle" title="Toggle Sound FX">🔊</button>
+    <button id="menu-toggle" title="Toggle Mission HUD">☰</button>
+    <button id="back-toggle" style="display: none;">⮌ MAP</button>
+
+    <div id="timeline-nav">
+        <div class="nav-item active" data-step="1"><div class="nav-dot"></div><span class="nav-label">waitingpage</span></div>
+        <div class="nav-item" data-step="2"><div class="nav-dot"></div><span class="nav-label">landing page</span></div>
+        <div class="nav-item" data-step="3"><div class="nav-dot"></div><span class="nav-label">agenda</span></div>
+        <div class="nav-item" data-step="4"><div class="nav-dot"></div><span class="nav-label">earth_descent</span></div>
+        <div class="nav-item" data-step="5"><div class="nav-dot"></div><span class="nav-label">dive</span></div>
+        <div class="nav-item" data-step="6"><div class="nav-dot"></div><span class="nav-label">mission map</span></div>
+        <div class="nav-item" data-step="7"><div class="nav-dot"></div><span class="nav-label">vehicles</span></div>
+        <div class="nav-item" data-step="8"><div class="nav-dot"></div><span class="nav-label">question mark</span></div>
+        <div class="nav-item" data-step="9"><div class="nav-dot"></div><span class="nav-label">challenges</span></div>
+        <div class="nav-item" data-step="10"><div class="nav-dot"></div><span class="nav-label">hull</span></div>
+        <div class="nav-item" data-step="11"><div class="nav-dot"></div><span class="nav-label">material</span></div>
+        <div class="nav-item" data-step="12"><div class="nav-dot"></div><span class="nav-label">buoyancy</span></div>
+        <div class="nav-item" data-step="13"><div class="nav-dot"></div><span class="nav-label">ballast system</span></div>
+        <div class="nav-item" data-step="14"><div class="nav-dot"></div><span class="nav-label">stability</span></div>
+        <div class="nav-item" data-step="15"><div class="nav-dot"></div><span class="nav-label">movement</span></div>
+        <div class="nav-item" data-step="16"><div class="nav-dot"></div><span class="nav-label">supporting systems</span></div>
+        <div class="nav-item" data-step="17"><div class="nav-dot"></div><span class="nav-label">vehicle categories</span></div>
+        <div class="nav-item" data-step="18"><div class="nav-dot"></div><span class="nav-label">hov</span></div>
+        <div class="nav-item" data-step="19"><div class="nav-dot"></div><span class="nav-label">rov</span></div>
+        <div class="nav-item" data-step="20"><div class="nav-dot"></div><span class="nav-label">auv</span></div>
+        <div class="nav-item" data-step="21"><div class="nav-dot"></div><span class="nav-label">hybrid</span></div>
+        <div class="nav-item" data-step="22"><div class="nav-dot"></div><span class="nav-label">nav intro</span></div>
+        <div class="nav-item" data-step="23"><div class="nav-dot"></div><span class="nav-label">nav topics</span></div>
+        <div class="nav-item" data-step="24"><div class="nav-dot"></div><span class="nav-label">dead reckoning</span></div>
+        <div class="nav-item" data-step="25"><div class="nav-dot"></div><span class="nav-label">inertial nav</span></div>
+        <div class="nav-item" data-step="26"><div class="nav-dot"></div><span class="nav-label">doppler log</span></div>
+        <div class="nav-item" data-step="27"><div class="nav-dot"></div><span class="nav-label">acoustic nav</span></div>
+        <div class="nav-item" data-step="28"><div class="nav-dot"></div><span class="nav-label">baseline matrix</span></div>
+        <div class="nav-item" data-step="29"><div class="nav-dot"></div><span class="nav-label">sensor fusion</span></div>
+        <div class="nav-item" data-step="30"><div class="nav-dot"></div><span class="nav-label">auto nav</span></div>
+    </div>
+
+    <div id="sub-hud">
+        <div>DEPTH: <span id="hud-depth">0</span> <span id="hud-depth-unit">m</span></div>
+        <div>TEMP: <span id="hud-temp">24.0</span> <span id="hud-temp-unit">°C</span></div>
+        <div>PRESSURE: <span id="hud-press">1.0</span> <span id="hud-press-unit">atm</span></div>
+    </div>
+
+    <div id="ai-scanner">
+        <div class="corner top-left"></div>
+        <div class="corner top-right"></div>
+        <div class="corner bottom-left"></div>
+        <div class="corner bottom-right"></div>
+        <div class="scan-target">ANALYZING BIODIVERSITY...</div>
+    </div>
+
+    <div id="core-glow"></div>
+    <div id="fade-to-white"></div>
+    <div id="fade-to-black"></div>
+
+    <div id="waiting-page" class="view-layer active">
+        <video id="bg-video" autoplay loop muted playsinline>
+            <source src="waiting_page.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div id="landing-page" class="view-layer">
+        <div id="cinematic-container">
+            <div class="layer bg-layer"></div>
+            <div class="layer light-rays"></div>
+            <canvas class="layer" id="bubble-canvas"></canvas>
+            <div class="layer aquaman-layer">
+                <img src="aquaman-sitting.png" alt="Aquaman" id="aquaman-img" title="Drag me!">
+            </div>
+            <div class="layer title-layer">
+                <div id="text-container" class="float-bobbing">
+                    <h1 id="main-title">ஆழ்கடலில் ஒரு பயணம்</h1>
+                    <h2 id="sub-title">Exploring the Unknown Depths</h2>
+                </div>
+            </div>
+            <div class="layer button-layer">
+                <button id="begin-btn">EXPLORE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="agenda-page" class="view-layer video-container">
+        <video id="vid-agenda" muted playsinline preload="auto"><source src="agenda.mp4" type="video/mp4"></video>
+        <div id="agenda-overlay" class="float-bobbing">
+            MISSION UPLOAD COMPLETE.<br>
+            <span class="blink">PRESS SPACE TO ENTER COMMAND MODULE</span>
+        </div>
+    </div>
+
+    <div id="ed1-page" class="view-layer video-container">
+        <video id="vid-ed-1" muted playsinline preload="auto"><source src="earth_descent 1.mp4" type="video/mp4"></video>
+    </div>
+    <div id="ed2-page" class="view-layer video-container">
+        <video id="vid-ed-2" muted playsinline preload="auto"><source src="earth_descent 2.mp4" type="video/mp4"></video>
+    </div>
+
+    <div id="dive-page-1" class="view-layer video-container">
+        <video id="vid-dive-1" muted playsinline preload="auto"><source src="dive 1.mp4" type="video/mp4"></video>
+    </div>
+
+    <div id="dive-page-2" class="view-layer video-container">
+        <video id="vid-dive-2" muted playsinline preload="auto"><source src="dive 2.mp4" type="video/mp4"></video>
+        <div class="center-depth-text float-bobbing-center" id="center-text-2">100 METERS</div>
+    </div>
+
+    <div id="dive-page-3" class="view-layer video-container">
+        <video id="vid-dive-3" muted playsinline preload="auto"><source src="dive 3.mp4" type="video/mp4"></video>
+        <div class="center-depth-text float-bobbing-center" id="center-text-3">500 METERS</div>
+    </div>
+
+    <div id="dive-page-4-1" class="view-layer video-container">
+        <video id="vid-dive-4-1" muted playsinline preload="auto"><source src="dive 4.1.mp4" type="video/mp4"></video>
+        <div class="center-depth-text float-bobbing-center" id="center-text-4-1">4000 METERS</div>
+    </div>
+
+    <div id="dive-page-4-2" class="view-layer video-container">
+        <video id="vid-dive-4-2" muted playsinline preload="auto"><source src="dive 4.2.mp4" type="video/mp4"></video>
+    </div>
+
+    <div id="dive-page-5" class="view-layer video-container">
+        <video id="vid-dive-5" muted playsinline preload="auto"><source src="dive 5.mp4" type="video/mp4"></video>
+        <div id="mariana-title" class="float-bobbing-center">MARIANA TRENCH</div>
+    </div>
+
+    <div id="map-page" class="view-layer">
+        <div id="map-background"></div>
+
+        <div class="map-node" id="node-start">
+            <div class="master-hud-wrapper hud-green">
+                <div class="hud-ring dashed spin-cw"></div>
+                <div class="hud-center"><svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z M4 22v-7" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+            </div>
+            <div class="node-text" style="text-align: left;"><span>MISSION START</span></div>
+        </div>
+       
+        <div class="map-node" id="node-uv" onclick="launchNode1()">
+            <div class="node-text" style="text-align: right;">NODE 1<br><span>UNDERWATER VEHICLES</span></div>
+            <div class="master-hud-wrapper hud-cyan">
+                <div class="hud-ring solid spin-ccw"></div>
+                <div class="hud-ring dashed spin-cw fast"></div>
+                <div class="hud-center"><svg viewBox="0 0 100 100" class="anim-bob"><path d="M20,50 Q20,30 50,30 L80,30 Q90,30 90,50 Q90,70 80,70 L50,70 Q20,70 20,50 Z" stroke="currentColor" stroke-width="4" fill="rgba(0,229,255,0.2)"/><circle cx="75" cy="50" r="5" fill="currentColor"/><rect x="40" y="15" width="20" height="15" stroke="currentColor" stroke-width="3" fill="none"/></svg></div>
+            </div>
+        </div>
+
+        <div class="map-node" id="node-nav" onclick="launchNode2()">
+            <div class="master-hud-wrapper hud-blue">
+                <div class="hud-radar-sweep"></div>
+                <div class="hud-ring dashed spin-cw"></div>
+                <div class="hud-center"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="50" cy="50" r="20" stroke="currentColor" stroke-width="1" fill="none"/><path d="M50,10 L50,90 M10,50 L90,50" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg></div>
+            </div>
+            <div class="node-text" style="text-align: left;">NODE 2<br><span>NAVIGATION SYSTEMS</span></div>
+        </div>
+
+        <div class="map-node" id="node-comm">
+            <div class="node-text" style="text-align: right;">NODE 3<br><span>COMMUNICATION SYSTEMS</span></div>
+            <div class="master-hud-wrapper hud-cyan">
+                <div class="hud-ring double spin-ccw"></div>
+                <div class="hud-center"><svg viewBox="0 0 100 100"><circle cx="50" cy="70" r="6" fill="currentColor"/><path d="M30,50 Q50,20 70,50" stroke="currentColor" stroke-width="4" fill="none" class="anim-pulse-1"/><path d="M15,35 Q50,-5 85,35" stroke="currentColor" stroke-width="4" fill="none" class="anim-pulse-2"/></svg></div>
+            </div>
+        </div>
+
+        <div class="map-node" id="node-sensor">
+            <div class="master-hud-wrapper hud-red">
+                <div class="hud-ring dashed spin-cw fast"></div>
+                <div class="hud-scanline"></div>
+                <div class="hud-center"><svg viewBox="0 0 100 100"><path d="M10,50 Q50,10 90,50 Q50,90 10,50 Z" stroke="currentColor" stroke-width="4" fill="rgba(255,68,0,0.1)"/><circle cx="50" cy="50" r="15" fill="currentColor" class="anim-scale"/></svg></div>
+            </div>
+            <div class="node-text" style="text-align: left;">NODE 4<br><span>SENSOR SYSTEMS</span></div>
+        </div>
+
+        <div class="map-node" id="node-power">
+            <div class="node-text" style="text-align: right;">NODE 5<br><span>POWER & CONTROL SYSTEMS</span></div>
+            <div class="master-hud-wrapper hud-cyan">
+                <div class="hud-ring solid spin-ccw slow"></div>
+                <div class="hud-center"><svg viewBox="0 0 100 100"><rect x="30" y="25" width="40" height="50" rx="4" stroke="currentColor" stroke-width="4" fill="none"/><path d="M40,25 L40,15 M60,25 L60,15 M40,75 L40,85 M60,75 L60,85 M30,40 L20,40 M30,60 L20,60 M70,40 L80,40 M70,60 L80,60" stroke="currentColor" stroke-width="3"/><path d="M40,50 L50,35 L50,50 L60,50 L50,65 L50,50 Z" fill="currentColor" class="anim-pulse-1"/></svg></div>
+            </div>
+        </div>
+
+        <div class="map-node" id="node-case">
+            <div class="master-hud-wrapper hud-orange">
+                <div class="hud-ring dashed spin-cw fast"></div>
+                <div class="hud-ring double spin-ccw"></div>
+                <div class="hud-center"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="10" fill="currentColor" class="anim-pulse-red"/><path d="M50,0 L50,20 M50,100 L50,80 M0,50 L20,50 M100,50 L80,50" stroke="currentColor" stroke-width="4"/></svg></div>
+            </div>
+            <div class="node-text" style="text-align: left;">NODE 6<br><span>MARIANA TRENCH CASE STUDY</span></div>
+        </div>
+    </div>
+
+    <div id="uv-page" class="view-layer video-container">
+        <video id="vid-uv-intro" playsinline preload="auto"><source src="underwater_vehicle_intro.mp4" type="video/mp4"></video>
+        <div id="uv-title" class="float-bobbing-center">UNDERWATER VEHICLES</div>
+    </div>
+
+    <div id="question-page" class="view-layer">
+        <svg id="question-mark-svg" viewBox="0 0 200 300" class="float-bobbing">
+            <path id="qm-path" d="M 50,100 C 50,20 150,20 150,100 C 150,150 100,160 100,210" fill="none" stroke="#00e5ff" stroke-width="15" stroke-linecap="round" filter="drop-shadow(0 0 15px #00e5ff)"/>
+            <circle id="qm-dot" cx="100" cy="260" r="12" fill="#00e5ff"/>
+        </svg>
+    </div>
+
+    <div id="analysis-page" class="view-layer">
+        <div id="flow-container"></div>
+    </div>
+
+    <div id="hull-page" class="view-layer">
+        <div id="hull-title-container" class="float-bobbing">
+            <h1 id="hull-main-title">HULL</h1>
+            <span id="hull-sub-title">(The Protective Structure That Survives the Deep Ocean)</span>
+        </div>
+        <div id="shapes-row-container">
+            <div class="shape-card card-square float-bobbing" style="animation-delay: 0.1s;"><img src="square.png" alt="Square" class="hull-img"><span class="shape-label">SQUARE</span><div class="cross-overlay cross-sq"><span class="wobble-cross">✕</span></div></div>
+            <div class="shape-card card-rectangle float-bobbing" style="animation-delay: 0.3s;"><img src="rectangle.png" alt="Rectangle" class="hull-img"><span class="shape-label">RECTANGLE</span><div class="cross-overlay cross-rect"><span class="wobble-cross">✕</span></div></div>
+            <div class="shape-card card-triangle float-bobbing" style="animation-delay: 0.5s;"><img src="triangle.png" alt="Triangle" class="hull-img"><span class="shape-label">TRIANGLE</span><div class="cross-overlay cross-tri"><span class="wobble-cross">✕</span></div></div>
+        </div>
+        <div id="sphere-center-container">
+            <div class="shape-card card-sphere float-bobbing"><img src="sphere.png" alt="Sphere" class="hull-img"><span class="shape-label">SPHERE</span><div class="cross-overlay cross-sph"><span class="wobble-cross">✕</span></div></div>
+        </div>
+        <div id="cylinder-full-view">
+            <video id="cylinder-vid-bg" autoplay loop muted playsinline preload="auto"><source src="cylinder.mp4" type="video/mp4"></video>
+            <div id="cylinder-overlay-title" class="float-bobbing">CYLINDER CONFIGURATION [OPTIMAL]</div>
+        </div>
+    </div>
+
+    <div id="material-page" class="view-layer">
+        <div id="material-title-container" class="float-bobbing">
+            <h1 id="material-main-title">MATERIAL</h1>
+            <span id="material-sub-title">(Deep Sea Pressure Resistance Evaluation)</span>
+        </div>
+        <div id="materials-row-1" class="materials-row">
+            <div class="shape-card card-plastic float-bobbing" style="animation-delay: 0.1s;"><img src="plastic.png" alt="Plastic" class="hull-img"><span class="shape-label">PLASTIC</span><div class="cross-overlay cross-plas"><span class="wobble-cross">✕</span></div></div>
+            <div class="shape-card card-steel float-bobbing" style="animation-delay: 0.3s;"><img src="steel.png" alt="Steel" class="hull-img"><span class="shape-label">STEEL</span></div>
+            <div class="shape-card card-alum float-bobbing" style="animation-delay: 0.5s;"><img src="aluminium.png" alt="Aluminium" class="hull-img"><span class="shape-label">ALUMINIUM</span></div>
+        </div>
+        <div id="materials-row-2" class="materials-row">
+            <div class="shape-card card-titanium float-bobbing" style="animation-delay: 0.2s;"><img src="titanium.png" alt="Titanium" class="hull-img"><span class="shape-label">TITANIUM</span></div>
+            <div class="shape-card card-carbon float-bobbing" style="animation-delay: 0.4s;"><img src="carbon_fiber_composite.png" alt="Carbon" class="hull-img"><span class="shape-label">CARBON FIBER</span></div>
+        </div>
+    </div>
+
+    <div id="buoyancy-page" class="view-layer">
+        <div id="buoyancy-title-container" class="float-bobbing">
+            <h1 id="buoyancy-main-title">BUOYANCY</h1>
+            <span id="buoyancy-sub-title">(The Principle of Flotation & Depth Control)</span>
+        </div>
+        <div id="archimedes-container">
+            <img src="Archimedes.jpg" alt="Archimedes" id="archimedes-img" class="float-bobbing">
+        </div>
+        <div id="buoyancy-videos-container">
+            <div class="video-row top-row">
+                <div class="shape-card vid-card card-positive float-bobbing" style="animation-delay: 0.1s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-positive" loop muted playsinline><source src="positive Buoyancy.mp4" type="video/mp4"></video>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <span class="shape-label">POSITIVE BUOYANCY</span>
+                </div>
+                <div class="shape-card vid-card card-negative float-bobbing" style="animation-delay: 0.3s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-negative" loop muted playsinline><source src="negative Buoyancy.mp4" type="video/mp4"></video>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <span class="shape-label">NEGATIVE BUOYANCY</span>
+                </div>
+            </div>
+            <div class="video-row bottom-row">
+                <div class="shape-card vid-card card-neutral float-bobbing" style="animation-delay: 0.5s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-neutral" loop muted playsinline><source src="neutral Buoyancy.mp4" type="video/mp4"></video>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <span class="shape-label">NEUTRAL BUOYANCY</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ballast-page" class="view-layer">
+        <div id="ballast-title-container" class="float-bobbing">
+            <h1 id="ballast-main-title">BALLAST SYSTEM</h1>
+            <span id="ballast-sub-title">(Submarine Depth Control Mechanism)</span>
+        </div>
+        <div id="ballast-videos-container" class="large-video-matrix">
+            <div class="shape-card vid-card large-vid card-b1 float-bobbing" style="animation-delay: 0.1s;">
+                <div class="vid-wrapper">
+                    <video id="vid-ballast-1" muted playsinline><source src="ballast_1.mp4" type="video/mp4"></video>
+                </div>
+                <span class="shape-label">PHASE 1: DESCENT</span>
+            </div>
+            <div class="shape-card vid-card large-vid card-b2 float-bobbing" style="animation-delay: 0.3s;">
+                <div class="vid-wrapper">
+                    <video id="vid-ballast-2" muted playsinline><source src="ballast_2.mp4" type="video/mp4"></video>
+                </div>
+                <span class="shape-label">PHASE 2: ASCENT</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="stability-page" class="view-layer">
+        <div id="stability-title-container" class="float-bobbing">
+            <h1 id="stability-main-title">STABILITY</h1>
+            <span id="stability-sub-title" style="opacity: 0;">(Centre of Gravity & Centre of Buoyancy)</span>
+        </div>
+        <div id="stability-videos-container" class="large-video-matrix">
+            <div class="shape-card vid-card large-vid card-s1 float-bobbing" style="animation-delay: 0.1s;">
+                <div class="vid-wrapper">
+                    <video id="vid-stability-1" loop muted playsinline><source src="CG_CB 1.mp4" type="video/mp4"></video>
+                </div>
+                <span class="shape-label">STABILITY DYNAMICS 1</span>
+            </div>
+            <div class="shape-card vid-card large-vid card-s2 float-bobbing" style="animation-delay: 0.3s;">
+                <div class="vid-wrapper">
+                    <video id="vid-stability-2" loop muted playsinline><source src="CG_CB 2.mp4" type="video/mp4"></video>
+                </div>
+                <span class="shape-label">STABILITY DYNAMICS 2</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="movement-page" class="view-layer">
+        <div id="movement-title-container" class="float-bobbing">
+            <h1 id="movement-main-title">MOVEMENT</h1>
+            <span id="movement-sub-title" style="opacity: 0;">(Dynamics of Deep Sea Propulsion)</span>
+        </div>
+        <div id="movement-videos-container" class="video-matrix-3">
+            <div class="shape-card vid-card card-m1 float-bobbing" style="animation-delay: 0.1s;">
+                <div class="vid-wrapper">
+                    <video id="vid-mov-1" loop muted playsinline><source src="drag.mp4" type="video/mp4"></video>
+                </div>
+                <span class="shape-label">DRAG FORCE</span>
+            </div>
+            <div class="shape-card vid-card card-m2 float-bobbing" style="animation-delay: 0.3s;">
+                <div class="vid-wrapper">
+                    <video id="vid-mov-2" loop muted playsinline><source src="thruster.mp4" type="video/mp4"></video>
+                </div>
+                <span class="shape-label">THRUSTER SYSTEM</span>
+            </div>
+            <div class="shape-card vid-card card-m3 float-bobbing" style="animation-delay: 0.5s;">
+                <div class="vid-wrapper">
+                    <video id="vid-mov-3" loop muted playsinline><source src="Propeller.mp4" type="video/mp4"></video>
+                </div>
+                <span class="shape-label">PROPELLER DYNAMICS</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="supporting-page" class="view-layer">
+        <div id="supporting-title-container" class="float-bobbing">
+            <h1 id="supporting-main-title">SUPPORTING SYSTEMS</h1>
+            <span id="supporting-sub-title" style="opacity: 0;">(Core Submersible Infrastructure)</span>
+        </div>
+        <div id="supporting-videos-container">
+            <div class="video-row top-row">
+                <div class="shape-card vid-card card-sup1 float-bobbing" style="animation-delay: 0.1s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-sup-1" loop muted playsinline><source src="control system.mp4" type="video/mp4"></video>
+                    </div>
+                    <span class="shape-label">CONTROL SYSTEM</span>
+                </div>
+                <div class="shape-card vid-card card-sup2 float-bobbing" style="animation-delay: 0.3s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-sup-2" loop muted playsinline><source src="communication system.mp4" type="video/mp4"></video>
+                    </div>
+                    <span class="shape-label">COMMUNICATION</span>
+                </div>
+                <div class="shape-card vid-card card-sup3 float-bobbing" style="animation-delay: 0.5s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-sup-3" loop muted playsinline><source src="navigation system.mp4" type="video/mp4"></video>
+                    </div>
+                    <span class="shape-label">NAVIGATION</span>
+                </div>
+            </div>
+            <div class="video-row bottom-row">
+                <div class="shape-card vid-card card-sup4 float-bobbing" style="animation-delay: 0.2s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-sup-4" loop muted playsinline><source src="sensor system.mp4" type="video/mp4"></video>
+                    </div>
+                    <span class="shape-label">SENSOR SYSTEMS</span>
+                </div>
+                <div class="shape-card vid-card card-sup5 float-bobbing" style="animation-delay: 0.4s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-sup-5" loop muted playsinline><source src="power system.mp4" type="video/mp4"></video>
+                    </div>
+                    <span class="shape-label">POWER SYSTEM</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="category-page" class="view-layer">
+        <div id="category-title-container" class="float-bobbing-center" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%;">
+            <h1 style="font-family: var(--font-poseidon); font-size: 5rem; color: #ffffff; letter-spacing: 10px; text-shadow: 0 0 20px #fff, 0 0 40px #00e5ff;">CATEGORY OF VEHICLES</h1>
+        </div>
+    </div>
+
+    <div id="hov-page" class="view-layer video-container">
+        <video id="vid-hov" loop muted playsinline preload="auto"><source src="HOV.mp4" type="video/mp4"></video>
+        <div class="vehicle-title float-bobbing-center">HUMAN OPERATED VEHICLE</div>
+    </div>
+
+    <div id="rov-page" class="view-layer video-container">
+        <video id="vid-rov" loop muted playsinline preload="auto"><source src="ROV.mp4" type="video/mp4"></video>
+        <div class="vehicle-title float-bobbing-center">REMOTELY OPERATED VEHICLE</div>
+    </div>
+
+    <div id="auv-page" class="view-layer video-container">
+        <video id="vid-auv" loop muted playsinline preload="auto"><source src="AUV.mp4" type="video/mp4"></video>
+        <div class="vehicle-title float-bobbing-center">AUTONOMOUS UNDERWATER VEHICLE</div>
+    </div>
+
+    <div id="hybrid-page" class="view-layer video-container">
+        <video id="vid-hybrid" loop muted playsinline preload="auto"><source src="hybrid.mp4" type="video/mp4"></video>
+        <div class="vehicle-title float-bobbing-center">HYBRID UNDERWATER VEHICLE</div>
+    </div>
+
+    <div id="nav-intro-page" class="view-layer video-container">
+        <video id="vid-nav-intro" muted playsinline preload="auto"><source src="navigation intro.mp4" type="video/mp4"></video>
+        <div id="nav-intro-title" class="dynamic-title" style="opacity: 0; pointer-events: none;">NAVIGATION SYSTEM</div>
+    </div>
+
+    <div id="nav-topics-page" class="view-layer">
+        <div class="nav-topics-container">
+            <div class="nav-topic-line">Dead Reckoning</div>
+            <div class="nav-topic-line">Inertial Navigation System (INS)</div>
+            <div class="nav-topic-line">Doppler Velocity Log (DVL)</div>
+            <div class="nav-topic-line">Acoustic Navigation</div>
+            <div class="nav-topic-line">Long Baseline (LBL)</div>
+            <div class="nav-topic-line">Short Baseline (SBL)</div>
+            <div class="nav-topic-line">Ultra Short Baseline (USBL)</div>
+            <div class="nav-topic-line">Modern Autonomous Navigation</div>
+        </div>
+    </div>
+
+    <div id="dead-reckoning-page" class="view-layer video-container">
+        <video id="vid-dead-reckoning" loop muted playsinline preload="auto"><source src="DEAD RECKONING.mp4" type="video/mp4"></video>
+        <div id="title-dr" class="dynamic-title">DEAD RECKONING</div>
+    </div>
+
+    <div id="ins-page" class="view-layer video-container">
+        <video id="vid-ins" loop muted playsinline preload="auto"><source src="INS.mp4" type="video/mp4"></video>
+        <div id="title-ins" class="dynamic-title">INERTIAL NAVIGATION SYSTEM (INS)</div>
+    </div>
+
+    <div id="dvl-page" class="view-layer video-container">
+        <video id="vid-dvl" loop muted playsinline preload="auto"><source src="DVL.mp4" type="video/mp4"></video>
+        <div id="title-dvl" class="dynamic-title">DOPPLER VELOCITY LOG (DVL)</div>
+    </div>
+
+    <div id="acoustic-page" class="view-layer video-container">
+        <video id="vid-acoustic" loop muted playsinline preload="auto"><source src="acoustic_navigation.mp4" type="video/mp4"></video>
+        <div id="title-acoustic" class="dynamic-title">ACOUSTIC NAVIGATION</div>
+       
+        <div id="acoustic-blur-overlay" class="blur-overlay"></div>
+       
+        <div id="baseline-matrix">
+            <div class="video-row top-row">
+                <div class="shape-card vid-card card-lbl float-bobbing" style="animation-delay: 0.1s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-lbl" loop muted playsinline><source src="LBL.mp4" type="video/mp4"></video>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <span class="shape-label">LONG BASELINE (LBL)</span>
+                </div>
+                <div class="shape-card vid-card card-sbl float-bobbing" style="animation-delay: 0.3s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-sbl" loop muted playsinline><source src="SBL.mp4" type="video/mp4"></video>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <span class="shape-label">SHORT BASELINE (SBL)</span>
+                </div>
+            </div>
+            <div class="video-row bottom-row">
+                <div class="shape-card vid-card card-usbl float-bobbing" style="animation-delay: 0.5s;">
+                    <div class="vid-wrapper">
+                        <video id="vid-usbl" loop muted playsinline><source src="USBL.mp4" type="video/mp4"></video>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <span class="shape-label">ULTRA SHORT BASELINE (USBL)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sensor-fusion-page" class="view-layer video-container">
+        <video id="vid-sensor-fusion" loop muted playsinline preload="auto"><source src="Sensor_fusion.mp4" type="video/mp4"></video>
+        <div id="title-sensor-fusion" class="dynamic-title">SENSOR FUSION</div>
+    </div>
+
+    <div id="autonomous-nav-page" class="view-layer video-container">
+        <video id="vid-autonomous-nav" loop muted playsinline preload="auto"><source src="autonomous navigation.mp4" type="video/mp4"></video>
+        <div id="title-autonomous-nav" class="dynamic-title">MODERN AUTONOMOUS NAVIGATION</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
